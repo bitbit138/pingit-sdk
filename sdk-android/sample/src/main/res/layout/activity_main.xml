@@ -2,59 +2,44 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/endpoint"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_endpoint"
-            android:inputType="textUri"
-            android:autofillHints="" />
+            android:layout_marginTop="6dp"
+            android:text="@string/subtitle"
+            android:textSize="14sp" />
 
         <Button
-            android:id="@+id/initButton"
+            android:id="@+id/checkButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_init" />
-
-        <Spinner
-            android:id="@+id/profileSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/readyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_ready" />
-
-        <Button
-            android:id="@+id/runButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_run_test" />
-
-        <Button
-            android:id="@+id/historyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_history" />
+            android:layout_marginTop="22dp"
+            android:text="@string/btn_check" />
 
         <TextView
             android:id="@+id/output"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="22dp"
             android:fontFamily="monospace"
+            android:lineSpacingExtra="4dp"
             android:text="@string/output_placeholder"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            android:textSize="15sp" />
 
     </LinearLayout>
 

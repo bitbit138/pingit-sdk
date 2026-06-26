@@ -40,9 +40,8 @@ to work when the primary server is unreachable.
 
 ## Visuals
 
-Screenshots (the demo app using the SDK, and the SDK dashboard):
+A demo app using the SDK (the "Hub"), and the SDK dashboard:
 
-<!-- Replace these placeholders with real screenshots before submission. -->
 ![Demo app using the PingIt SDK](docs/assets/demo-app.png)
 ![PingIt SDK dashboard](docs/assets/dashboard.png)
 

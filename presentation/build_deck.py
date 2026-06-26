@@ -393,9 +393,9 @@ def slide_problem():
             [{"text": "Mobile networks are unpredictable — and apps can't tell what they can handle.",
               "size": 18, "bold": True, "color": NAVY, "align": PP_ALIGN.CENTER}])
     cards = [
-        ("∿", AMBER, "Networks vary wildly", "cellular ↔ wifi, moving between cells, weak signal, dead zones"),
-        ("?", RED, "Apps are flying blind", "no lightweight “can the network handle this?” check exists"),
-        ("⚙", NAVY2, "Hard to do well", "slow-start, flaky nets, data cost — and you need a target to measure against"),
+        ("1", AMBER, "Networks vary wildly", "cellular to wifi, moving between cells, weak signal, dead zones"),
+        ("2", RED, "Apps are flying blind", "no lightweight \"can the network handle this?\" check exists"),
+        ("3", NAVY2, "Hard to do well", "slow-start, flaky nets, data cost, and you need a target to measure against"),
     ]
     wf, gapf, x0f = 3.92, 0.14, 0.7
     for i, (glyph, col, title, body) in enumerate(cards):
@@ -798,12 +798,12 @@ def slide_resilience():
 def slide_mobile():
     s = slide_base("Lightweight & mobile-aware design", kicker="Battery · data · flaky nets", accent=TEAL)
     items = [
-        ("Adaptive, capped payloads", "Start /download small, grow only on fast links; cap total test data to a few MB.", "⤢", TEAL),
-        ("Short tests", "A few seconds total — quick bursts, not background polling.", "⏱", AMBER),
-        ("Warm-up awareness", "Ignore the first moments so TCP slow-start doesn't make fast links look slow.", "↗", GREEN),
-        ("Battery-aware", "Runs only when the developer asks; no idle drain.", "⏻", TEAL_DK),
-        ("Cache + jittered refresh", "Profiles fetched ~daily at a random time, not per check — saves data + battery.", "↻", NAVY2),
-        ("Data-saver mode", "Optional smaller payloads / shorter tests for metered plans; can follow the OS flag.", "⇣", TEAL),
+        ("Adaptive, capped payloads", "Start /download small, grow only on fast links; cap total test data to a few MB.", "1", TEAL),
+        ("Short tests", "A few seconds total: quick bursts, not background polling.", "2", AMBER),
+        ("Warm-up awareness", "Ignore the first moments so TCP slow-start doesn't make fast links look slow.", "3", GREEN),
+        ("Battery-aware", "Runs only when the developer asks; no idle drain.", "4", TEAL_DK),
+        ("Cache + jittered refresh", "Profiles fetched ~daily at a random time, not per check; saves data and battery.", "5", NAVY2),
+        ("Data-saver mode", "Optional smaller payloads / shorter tests for metered plans; can follow the OS flag.", "6", TEAL),
     ]
     x = [Inches(0.7), Inches(6.75)]
     y0 = Inches(1.9)
@@ -884,7 +884,7 @@ def slide_portal_wireframe():
     textbox(s, Inches(0.95), Inches(1.75), Inches(8), Inches(0.5),
             [{"text": "PingIt · Admin Portal", "size": 12.5, "bold": True, "color": WHITE}], anchor=MSO_ANCHOR.MIDDLE)
     textbox(s, Inches(9.5), Inches(1.75), Inches(3.0), Inches(0.5),
-            [{"text": "signed in: admin ▾", "size": 10.5, "color": PALE, "align": PP_ALIGN.RIGHT}], anchor=MSO_ANCHOR.MIDDLE)
+            [{"text": "signed in: admin", "size": 10.5, "color": PALE, "align": PP_ALIGN.RIGHT}], anchor=MSO_ANCHOR.MIDDLE)
     side = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.7), Inches(2.25), Inches(2.4), Inches(4.45))
     _set_fill(side, LIGHT2); _no_line(side)
     nav = ["Dashboard", "Profiles", "History", "Apps & keys", "Health", "Crashes"]
@@ -1001,15 +1001,15 @@ def slide_research_crash():
 def slide_applications():
     s = slide_base("Applications that can use PingIt", kicker="Who benefits", accent=TEAL)
     apps = [
-        ("Messaging / chat", "Check the link before sync; warn on dead links", TEAL_DK, "✉"),
-        ("VoIP / calling", "Warn before a weak voice or video call", NAVY2, "☎"),
-        ("Video streaming", "Pick HD vs SD from measured download", TEAL_DK, "▶"),
-        ("Cloud / file backup", "Defer big uploads until the link is strong", GREEN, "☁"),
-        ("Cloud gaming", "Gate on ultra-low latency & jitter", NAVY2, "✦"),
-        ("Live broadcasting", "Check upload before going live", TEAL_DK, "∿"),
-        ("Telehealth", "Video visits — check call quality first", GREEN, "⚕"),
-        ("IoT / field apps", "Confirm the link before sending sensor data", NAVY2, "⬡"),
-        ("Maps / navigation", "Weak data → switch to offline tiles", TEAL_DK, "⌖"),
+        ("Messaging / chat", "Check the link before sync; warn on dead links", TEAL_DK, "1"),
+        ("VoIP / calling", "Warn before a weak voice or video call", NAVY2, "2"),
+        ("Video streaming", "Pick HD vs SD from measured download", TEAL_DK, "3"),
+        ("Cloud / file backup", "Defer big uploads until the link is strong", GREEN, "4"),
+        ("Cloud gaming", "Gate on ultra-low latency and jitter", NAVY2, "5"),
+        ("Live broadcasting", "Check upload before going live", TEAL_DK, "6"),
+        ("Telehealth", "Video visits: check call quality first", GREEN, "7"),
+        ("IoT / field apps", "Confirm the link before sending sensor data", NAVY2, "8"),
+        ("Maps / navigation", "Weak data: switch to offline tiles", TEAL_DK, "9"),
     ]
     w = Inches(3.92); gap = Inches(0.14); h = Inches(1.4); badge_d = Inches(0.62)
     for i, (title, body, col, glyph) in enumerate(apps):

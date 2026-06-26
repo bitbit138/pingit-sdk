@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PingIt Sample</string>
-    <string name="hint_endpoint">Endpoint base URL (e.g. https://host:port)</string>
-    <string name="btn_init">Init</string>
-    <string name="btn_ready">Is Ready For (selected)</string>
-    <string name="btn_run_test">Run Test</string>
-    <string name="btn_history">Show History</string>
-    <string name="output_placeholder">Enter an endpoint and tap Init.</string>
-    <string name="initialized">Initialized with endpoint:\n%1$s</string>
-    <string name="checking">Checking readiness for %1$s…</string>
-    <string name="running_test">Running test…</string>
-    <string name="no_history">No history yet.</string>
-    <string name="error_endpoint_required">Endpoint is required.</string>
-    <string name="error_not_initialized">Tap Init first.</string>
-    <string name="error_generic">Error: %1$s</string>
+    <string name="app_name">PingIt Hub</string>
+    <string name="title">PingIt Hub</string>
+    <string name="subtitle">A tiny demo of the PingIt SDK. Tap below to check what your connection can handle right now.</string>
+    <string name="btn_check">Check my connection</string>
+    <string name="checking">Checking your connection...</string>
+    <string name="output_placeholder">Tap "Check my connection" to run the SDK.</string>
+    <string name="not_initialized">SDK not initialized. Check the APP_ID and ENDPOINT meta-data in AndroidManifest.xml.</string>
+    <string name="error_generic">Could not reach the server: %1$s</string>
 </resources>
