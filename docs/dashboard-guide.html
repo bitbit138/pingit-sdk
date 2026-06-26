@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard Guide — PingIt Documentation</title>
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="inner">
+        <div class="brand"><span class="dot"></span> PingIt Documentation</div>
+        <nav class="topnav">
+          <a href="index.html">Overview</a>
+          <a href="app-guide.html">App Guide</a>
+          <a href="dashboard-guide.html">Dashboard Guide</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h4>Documentation</h4>
+        <a href="index.html">Overview</a>
+        <a href="app-guide.html">App Guide</a>
+        <a href="dashboard-guide.html" class="active">Dashboard Guide</a>
+        <h4>On this page</h4>
+        <a href="#components">Components</a>
+        <a href="#get-started">Get started (run locally)</a>
+        <a href="#deploy">Deploy to production</a>
+        <a href="#use">Use the dashboard</a>
+      </aside>
+
+      <main class="content">
+        <h1>Dashboard Guide</h1>
+        <p class="lead">
+          For operators who host the PingIt backend (the measurement server and the data and admin
+          APIs), the Postgres database, and the admin dashboard. To integrate the SDK into an app,
+          see the <a href="app-guide.html">App Guide</a>.
+        </p>
+
+        <h2 id="components">Components</h2>
+        <table>
+          <thead><tr><th>Component</th><th>What it is</th><th>How it is served</th></tr></thead>
+          <tbody>
+            <tr><td>Postgres</td><td>profiles, apps, users, results, crashes</td><td>managed database or the bundled container</td></tr>
+            <tr><td>Server</td><td>Fastify app: measurement, data, and admin APIs</td><td>Node process or container on port <code>8080</code></td></tr>
+            <tr><td>Dashboard</td><td>static React build (<code>packages/portal/dist</code>)</td><td>served by the server, or any static host</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="get-started">Get started (run locally)</h2>
+
+        <h3>Prerequisites</h3>
+        <table>
+          <thead><tr><th>Tool</th><th>Version</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Node</td><td>22 or newer</td><td>server, dashboard, contracts</td></tr>
+            <tr><td>pnpm</td><td>10 or newer</td><td><code>corepack enable</code> activates the pinned version</td></tr>
+            <tr><td>Docker and Compose</td><td>any recent</td><td>runs Postgres (no local Postgres needed)</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Setup</h3>
+        <pre><code>corepack enable
+pnpm install            # installs all workspace deps
+pnpm build:contracts    # builds @pingit/contracts and emits profiles.json</code></pre>
+        <p><code>@pingit/contracts</code> is the single source of truth for shared types and the
+          profile thresholds. Rebuild it after editing any shared type or threshold;
+          <code>pnpm gen:profiles</code> also re-emits <code>profiles.json</code> into the Android
+          core resources.</p>
+
+        <h3>Database</h3>
+        <pre><code>pnpm db:up                                             # Postgres in Docker (:5432)
+cp packages/server/.env.example packages/server/.env   # server config
+pnpm db:migrate                                        # create tables and indexes
+pnpm db:seed                                           # profiles, admin, and demo apps</code></pre>
+        <p><code>db:seed</code> prints the demo <code>appId</code> and creates the web demo's fixed
+          <code>app_demo</code>. Default accounts:</p>
+        <ul>
+          <li>Admin: <code>admin@pingit.dev</code> / <code>ChangeMe123!</code></li>
+          <li>Developer: <code>dev@pingit.dev</code> / <code>ChangeMe123!</code></li>
+        </ul>
+        <p class="callout">The test suite uses a separate <code>pingit_test</code> database
+          (auto-migrated). Create it once if needed:
+          <code>docker compose exec -T postgres createdb -U pingit pingit_test</code>.</p>
+
+        <h3>Run</h3>
+        <pre><code>pnpm dev            # builds contracts, then runs server (:8080) and dashboard (:5173)
+pnpm dev:server     # server only
+pnpm dev:portal     # dashboard only (proxies API calls to :8080)</code></pre>
+
+        <h3>Test</h3>
+        <pre><code>pnpm test                              # contracts, server, dashboard
+pnpm --filter @pingit/server test      # API integration tests (Postgres up)
+pnpm --filter @pingit/portal test      # dashboard unit tests
+pnpm smoke                             # end-to-end HTTP flow against a running server</code></pre>
+
+        <h2 id="deploy">Deploy to production</h2>
+
+        <h3>Option 1: Docker Compose (single host)</h3>
+        <p>The Compose file bundles Postgres and the server. The server image runs migrations and
+          seed on boot through <code>RUN_MIGRATIONS</code> and <code>RUN_SEED</code>:</p>
+        <pre><code>pnpm docker:up          # docker compose --profile full up --build -d
+curl -s localhost:8080/health
+pnpm docker:down</code></pre>
+
+        <h3>Option 2: Managed database and a container platform</h3>
+        <ol>
+          <li>Provision Postgres and set <code>DATABASE_URL</code>.</li>
+          <li>Build the image: <code>docker build -f packages/server/Dockerfile -t pingit-server .</code></li>
+          <li>Initialize once with <code>RUN_MIGRATIONS=true RUN_SEED=true</code> (or run
+            <code>pnpm db:migrate &amp;&amp; pnpm db:seed</code> as a one-off job), then run normally.</li>
+          <li>Deploy on your platform (Fly, Render, ECS, a VM), exposing port <code>8080</code>
+            behind HTTPS.</li>
+        </ol>
+
+        <h3>Environment to set before production</h3>
+        <table>
+          <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>DATABASE_URL</code></td><td>Postgres connection string</td></tr>
+            <tr><td><code>JWT_SECRET</code></td><td>must be a strong random secret</td></tr>
+            <tr><td><code>ADMIN_EMAIL</code> / <code>ADMIN_PASSWORD</code></td><td>the seeded admin account</td></tr>
+            <tr><td><code>DOWNLOAD_MAX_BYTES</code> / <code>UPLOAD_MAX_BYTES</code></td><td>measurement payload caps (default 25 MB)</td></tr>
+            <tr><td><code>RATE_LIMIT_MAX</code> / <code>RATE_LIMIT_WINDOW_MS</code></td><td>abuse protection</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Serving the dashboard</h3>
+        <ul>
+          <li>Same origin (recommended): <code>pnpm --filter @pingit/portal build</code> and serve
+            <code>packages/portal/dist</code> from the same host as the API, leaving
+            <code>VITE_API_BASE</code> empty.</li>
+          <li>Separate static host: set <code>VITE_API_BASE</code> to the server URL at build time.
+            The server allows cross-origin requests.</li>
+        </ul>
+
+        <h3>Operational notes</h3>
+        <ul>
+          <li>Health: <code>GET /health</code> is unauthenticated. Use it for load balancers and the
+            SDK's fallback probe.</li>
+          <li>Scaling: measurement traffic is bandwidth-bound and stateless and can be hosted
+            separately from the data API later. The default rate-limit store is in-memory; add a
+            shared store such as Redis for multiple instances.</li>
+          <li>Backups: <code>profiles</code>, <code>apps</code>, and <code>users</code> are the
+            critical configuration tables; <code>results</code> and <code>crashes</code> are
+            append-only history.</li>
+        </ul>
+
+        <h2 id="use">Use the dashboard</h2>
+        <p>Open the dashboard (default <code>http://localhost:5173</code> in development) and sign
+          in.</p>
+
+        <h3>Roles</h3>
+        <ul>
+          <li><strong>Admin</strong>: edit profile thresholds; see global analytics, health, and
+            crash reports across all apps.</li>
+          <li><strong>Developer</strong>: register apps to get an <code>appId</code>, and see
+            analytics for their own app only. Access is scoped by role and by <code>appId</code>.</li>
+        </ul>
+
+        <h3>Common tasks</h3>
+        <ul>
+          <li><strong>Register an app:</strong> in Apps and keys, register an app, then copy the
+            <code>appId</code> and the one-time API key (not shown again). Give the <code>appId</code>
+            to the app developer for <code>PingIt.init</code> or the manifest configuration.</li>
+          <li><strong>Tune a profile:</strong> open Profiles, pick a profile, edit the metric minimum
+            and maximum thresholds, and save. This bumps the global version, and SDKs pick up the new
+            thresholds on their next refresh with no app release needed.</li>
+          <li><strong>Read analytics:</strong> the Dashboard and Analytics pages show pass rate per
+            profile, average latency over time, and test counts. KPI cards show tests today, pass
+            rate, average latency, and fallback rate. The web demo reports under <code>app_demo</code>,
+            so its runs appear here.</li>
+          <li><strong>Investigate issues:</strong> the Crashes page lists uploaded crash and error
+            reports per app.</li>
+        </ul>
+
+        <h3>How identity works</h3>
+        <ul>
+          <li><code>appId</code> identifies the app. It is set once in the SDK configuration, much
+            like a Stripe or Firebase key.</li>
+          <li><code>deviceId</code> is an anonymous UUID the SDK generates on first run and stores on
+            the device. It survives restarts and identifies one install over time. There are no
+            hardware identifiers and no personal data. A reinstall starts a fresh
+            <code>deviceId</code>.</li>
+        </ul>
+      </main>
+    </div>
+
+    <footer>PingIt SDK documentation</footer>
+  </body>
+</html>

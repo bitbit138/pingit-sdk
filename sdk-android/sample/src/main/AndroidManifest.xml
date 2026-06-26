@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.AppCompat.DayNight">
+
+        <!--
+            Auto-init configuration. The SDK reads these on startup and creates
+            the default client (PingIt.getInstance()). 10.0.2.2 is the Android
+            emulator's alias for the host machine's localhost, where the PingIt
+            server runs on port 8080.
+        -->
+        <meta-data android:name="com.pingit.APP_ID" android:value="app_demo" />
+        <meta-data android:name="com.pingit.ENDPOINT" android:value="http://10.0.2.2:8080" />
+        <meta-data android:name="com.pingit.HISTORY_MODE" android:value="SERVER_HISTORY" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

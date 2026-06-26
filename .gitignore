@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+*.tsbuildinfo
+.vite/
+coverage/
+playwright-report/
+test-results/
+
+# env / secrets
+.env
+.env.local
+*.local
+
+# android / gradle
+.gradle/
+sdk-android/**/build/
+local.properties
+.kotlin/
+
+# python (presentation)
+.venv/
+
+# os / editor
+.DS_Store
+*.log

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App Guide — PingIt Documentation</title>
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="inner">
+        <div class="brand"><span class="dot"></span> PingIt Documentation</div>
+        <nav class="topnav">
+          <a href="index.html">Overview</a>
+          <a href="app-guide.html">App Guide</a>
+          <a href="dashboard-guide.html">Dashboard Guide</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h4>Documentation</h4>
+        <a href="index.html">Overview</a>
+        <a href="app-guide.html" class="active">App Guide</a>
+        <a href="dashboard-guide.html">Dashboard Guide</a>
+        <h4>On this page</h4>
+        <a href="#get-started">Get started</a>
+        <a href="#core-functions">Core functions</a>
+        <a href="#examples">Examples</a>
+        <a href="#automatic">What it does automatically</a>
+        <a href="#demo">Try the demo</a>
+        <a href="#from-source">Build from source</a>
+      </aside>
+
+      <main class="content">
+        <h1>App Guide</h1>
+        <p class="lead">
+          For app developers adding PingIt to an Android app: how to install the SDK, configure it,
+          and call it. To run the backend and dashboard, see the
+          <a href="dashboard-guide.html">Dashboard Guide</a>.
+        </p>
+
+        <h2 id="get-started">Get started</h2>
+
+        <h3>1. Get an appId</h3>
+        <p>Register your app in the dashboard (or ask an operator to). You receive an
+          <code>appId</code> and a one-time API key. The <code>appId</code> identifies your app on
+          every request and scopes your data.</p>
+
+        <h3>2. Add the SDK</h3>
+        <p>The SDK lives under <code>sdk-android/</code>. Until it is published to a Maven
+          repository, add it as a local module or composite build, or build the AAR and depend on
+          it:</p>
+        <pre><code>cd sdk-android
+./gradlew :android:assembleRelease    # outputs android/build/outputs/aar/</code></pre>
+        <p>Requirements: Android Studio, JDK 17, <code>minSdk 24</code>. The library declares the
+          <code>INTERNET</code> and <code>ACCESS_NETWORK_STATE</code> permissions for you.</p>
+
+        <h3>3. Configure auto-initialization (recommended)</h3>
+        <p>PingIt initializes itself on app startup using AndroidX App Startup. You do not need to
+          call any init code. Add your configuration as <code>meta-data</code> inside the
+          <code>&lt;application&gt;</code> element of your <code>AndroidManifest.xml</code>:</p>
+        <pre><code>&lt;application ...&gt;
+    &lt;meta-data android:name="com.pingit.APP_ID"   android:value="app_xxxxxxxx" /&gt;
+    &lt;meta-data android:name="com.pingit.ENDPOINT" android:value="https://api.example.com" /&gt;
+
+    &lt;!-- optional --&gt;
+    &lt;meta-data android:name="com.pingit.HISTORY_MODE"      android:value="LAST_LOCAL" /&gt;
+    &lt;meta-data android:name="com.pingit.DATA_SAVER"        android:value="false" /&gt;
+    &lt;meta-data android:name="com.pingit.FALLBACK_ENDPOINT" android:value="https://backup.example.com" /&gt;
+&lt;/application&gt;</code></pre>
+        <p>After startup, get the ready-to-use client anywhere in your app:</p>
+        <pre><code>val pingit = PingIt.getInstance()</code></pre>
+
+        <h3>Initialize in code instead (optional)</h3>
+        <p>To configure the SDK at runtime, disable the startup initializer in your manifest and call
+          <code>init</code> yourself:</p>
+        <pre><code>&lt;provider
+    android:name="androidx.startup.InitializationProvider"
+    android:authorities="${applicationId}.androidx-startup"
+    tools:node="merge"&gt;
+    &lt;meta-data android:name="com.pingit.android.startup.PingItInitializer"
+               tools:node="remove" /&gt;
+&lt;/provider&gt;</code></pre>
+        <pre><code>val pingit = PingIt.init(
+    appId = "app_xxxxxxxx",
+    config = Config(
+        endpoint = "https://api.example.com",
+        historyMode = HistoryMode.LAST_LOCAL,   // NONE | LAST_LOCAL | SERVER_HISTORY
+        dataSaver = false,
+        fallbackEndpoint = null,
+    ),
+    context = applicationContext,
+)</code></pre>
+
+        <h2 id="core-functions">Core functions</h2>
+        <table>
+          <thead>
+            <tr><th>Function</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>PingIt.getInstance()</code></td><td>The client created by auto-initialization.</td></tr>
+            <tr><td><code>PingIt.init(appId, config, context)</code></td><td>Initialize in code; returns and registers the client.</td></tr>
+            <tr><td><code>isReadyFor(profile)</code></td><td>Measure and return pass or fail with a reason.</td></tr>
+            <tr><td><code>runTest()</code></td><td>Run a full measurement; returns metrics, score, and label.</td></tr>
+            <tr><td><code>ping()</code></td><td>Round-trip latency in milliseconds.</td></tr>
+            <tr><td><code>getHistory(limit)</code></td><td>Recent results (depends on the history mode).</td></tr>
+            <tr><td><code>refreshProfiles()</code></td><td>Force a refresh of the readiness thresholds.</td></tr>
+            <tr><td><code>cancel()</code></td><td>Cancel an in-flight measurement.</td></tr>
+          </tbody>
+        </table>
+        <p>All measurement functions are <code>suspend</code> functions; call them from a
+          coroutine.</p>
+
+        <h2 id="examples">Examples</h2>
+
+        <h3>Ask a readiness question (the common case)</h3>
+        <pre><code>val ready = PingIt.getInstance().isReadyFor(Profile.VIDEO_CALL)
+if (!ready.passed) {
+    // ready.reason -&gt; "latency too high" / "upload too low" / "no connection"
+    showWarning("Your connection may not handle a video call: ${ready.reason}")
+}</code></pre>
+        <p><code>isReadyFor</code> returns <code>ReadinessResult(profile, passed, reason,
+          measured)</code>. Offline is handled honestly: with no connection you get
+          <code>passed = false</code>, <code>reason = "no connection"</code>,
+          <code>measured = null</code>, never a fake pass.</p>
+        <p>Available profiles: <code>MESSAGING</code>, <code>WEB_BROWSING</code>,
+          <code>MUSIC_STREAMING</code>, <code>VOICE_CALL</code>, <code>VIDEO_CALL</code>,
+          <code>HD_STREAMING</code>, <code>UHD_4K_STREAMING</code>, <code>CLOUD_GAMING</code>,
+          <code>LIVE_BROADCAST</code>, <code>LARGE_UPLOAD</code>.</p>
+
+        <h3>Raw measurement and history</h3>
+        <pre><code>val client = PingIt.getInstance()
+val result = client.runTest()
+// result.downloadMbps, result.uploadMbps, result.latencyMs,
+// result.jitterMs, result.score (0-100), result.label
+
+val latency = client.ping()                  // latency only, in ms
+val recent  = client.getHistory(limit = 20)  // depends on the history mode
+client.refreshProfiles()                     // force a threshold refresh
+client.cancel()                              // abort an in-flight test</code></pre>
+
+        <h3>History modes</h3>
+        <table>
+          <thead><tr><th>Mode</th><th>Behavior</th></tr></thead>
+          <tbody>
+            <tr><td><code>NONE</code></td><td>Keep nothing.</td></tr>
+            <tr><td><code>LAST_LOCAL</code> (default)</td><td>Keep only the most recent result on the device.</td></tr>
+            <tr><td><code>SERVER_HISTORY</code></td><td>Also upload each result to the server, buffered and retried.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Data saver</h3>
+        <p>Set <code>DATA_SAVER</code> to <code>true</code> (or wire it to the operating system
+          data-saver flag) to run smaller payloads and shorter tests for users on metered plans.</p>
+
+        <h2 id="automatic">What the SDK does automatically</h2>
+        <ul>
+          <li>Profiles are fetched once and cached, then refreshed about once a day at a randomized
+            time and whenever the version changes. Offline, it falls back to the cache and then to
+            bundled defaults.</li>
+          <li>Uncaught exceptions are persisted immediately and uploaded on the next launch through
+            WorkManager, so a crash before the app closes is not lost.</li>
+          <li>If the primary server is unreachable, measurement falls back to a public endpoint when
+            one is configured. The readiness decision is always made on the device.</li>
+        </ul>
+
+        <h2 id="demo">Try the demo</h2>
+        <p>The <code>demo/</code> folder is a small web app ("Hub") that shows the SDK behavior in
+          everyday actions (message, video call, watch, cloud gaming, backup). It calls the server
+          the same way the SDK does and uses the same scoring and evaluation logic, which makes it a
+          quick way to see the value end to end without an emulator. See
+          <a href="../demo/README.md">demo/README.md</a>.</p>
+
+        <h2 id="from-source">Build and test the SDK from source</h2>
+        <p>The SDK logic lives in a pure-Kotlin <code>core</code> module that unit-tests on the JVM
+          with no Android SDK required:</p>
+        <pre><code>cd sdk-android/core
+JAVA_HOME=/opt/homebrew/opt/openjdk@17 ./gradlew test</code></pre>
+        <p>The Android library and sample app build in Android Studio (set <code>sdk.dir</code> in
+          <code>local.properties</code>):</p>
+        <pre><code>cd sdk-android
+./gradlew :sample:assembleDebug     # the sample app
+./gradlew :android:assembleRelease  # the SDK AAR</code></pre>
+      </main>
+    </div>
+
+    <footer>PingIt SDK documentation</footer>
+  </body>
+</html>

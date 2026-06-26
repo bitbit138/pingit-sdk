@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+coverage
+.vite
+playwright-report
+test-results
+.venv
+sdk-android
+presentation
+pnpm-lock.yaml
+**/profiles.json

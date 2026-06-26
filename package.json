@@ -1,0 +1,42 @@
+{
+  "name": "pingit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PingIt SDK — lightweight mobile connection-quality SDK, measurement server, and admin portal",
+  "packageManager": "pnpm@10.26.2",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "build:contracts": "pnpm --filter @pingit/contracts build",
+    "gen:profiles": "pnpm --filter @pingit/contracts gen:profiles",
+    "dev": "pnpm build:contracts && pnpm --parallel --filter @pingit/server --filter @pingit/portal dev",
+    "dev:server": "pnpm --filter @pingit/server dev",
+    "dev:portal": "pnpm --filter @pingit/portal dev",
+    "build": "pnpm build:contracts && pnpm --filter @pingit/server build && pnpm --filter @pingit/portal build",
+    "test": "pnpm build:contracts && pnpm -r --workspace-concurrency=1 test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d postgres",
+    "db:migrate": "pnpm --filter @pingit/server db:migrate",
+    "db:seed": "pnpm --filter @pingit/server db:seed",
+    "smoke": "node packages/server/scripts/smoke.mjs",
+    "docker:up": "docker compose --profile full up --build -d",
+    "docker:down": "docker compose --profile full down"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "eslint": "^9.18.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

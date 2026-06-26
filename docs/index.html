@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PingIt Documentation</title>
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="inner">
+        <div class="brand"><span class="dot"></span> PingIt Documentation</div>
+        <nav class="topnav">
+          <a href="index.html">Overview</a>
+          <a href="app-guide.html">App Guide</a>
+          <a href="dashboard-guide.html">Dashboard Guide</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h4>Documentation</h4>
+        <a href="index.html" class="active">Overview</a>
+        <a href="app-guide.html">App Guide</a>
+        <a href="dashboard-guide.html">Dashboard Guide</a>
+        <h4>On this page</h4>
+        <a href="#use-cases">Use cases and features</a>
+        <a href="#setup">Implementation and setup</a>
+        <a href="#architecture">Architecture</a>
+        <h4>Reference</h4>
+        <a href="PRD.md">Product requirements</a>
+        <a href="SERVER_ARCHITECTURE.md">Server architecture</a>
+        <a href="../README.md">Project README</a>
+      </aside>
+
+      <main class="content">
+        <h1>PingIt Documentation</h1>
+        <p class="lead">
+          PingIt is a mobile SDK that measures a device's internet connection and tells an app
+          whether the connection is good enough for a given task, such as a video call or HD
+          streaming. The SDK runs the measurement and makes the decision on the device. A server
+          acts as the measurement target and stores readiness profiles and optional history, and a
+          dashboard lets operators manage apps, tune profiles, and view analytics.
+        </p>
+
+        <h2>Get started</h2>
+        <div class="cards">
+          <div class="card">
+            <h3>App Guide</h3>
+            <p>Add the SDK to an Android app, configure auto-initialization, and call it.</p>
+            <p><a href="app-guide.html">Open the App Guide &rsaquo;</a></p>
+          </div>
+          <div class="card">
+            <h3>Dashboard Guide</h3>
+            <p>Run the backend and database, and operate the admin dashboard.</p>
+            <p><a href="dashboard-guide.html">Open the Dashboard Guide &rsaquo;</a></p>
+          </div>
+        </div>
+
+        <h2>Video and diagram</h2>
+        <p>Video demonstration:</p>
+        <div class="placeholder">
+          Add a link to the recorded walkthrough here (for example
+          <code>assets/demo-video.mp4</code>).
+        </div>
+        <p>Entity Relationship Diagram: see the rendered diagram under
+          <a href="#architecture">Architecture</a> below.</p>
+
+        <h2 id="use-cases">Use cases and features</h2>
+        <p>PingIt is useful in any app whose experience depends on connection quality. A few things
+          you can build:</p>
+        <ul>
+          <li>A calling app that checks <code>VIDEO_CALL</code> before dialing and offers an
+            audio-only fallback when the link is weak.</li>
+          <li>A streaming app that picks HD or SD from <code>HD_STREAMING</code> or
+            <code>UHD_4K_STREAMING</code>.</li>
+          <li>A cloud gaming client that gates play on the strict latency of
+            <code>CLOUD_GAMING</code>.</li>
+          <li>A backup app that defers a large upload until the link can handle
+            <code>LARGE_UPLOAD</code>.</li>
+        </ul>
+        <p>Core features:</p>
+        <ul>
+          <li>Measurement of download, upload, latency, and jitter.</li>
+          <li>Readiness profiles that turn a measurement into a clear pass or fail with a reason.</li>
+          <li>On-device decisions, so a check does not require a server round trip.</li>
+          <li>Auto initialization on app startup.</li>
+          <li>Configurable history: none, last result on device, or full server history.</li>
+          <li>A fallback measurement target and an honest offline result.</li>
+          <li>Crash capture with deferred upload.</li>
+          <li>Server-tuned, versioned thresholds editable from the dashboard.</li>
+        </ul>
+
+        <h2 id="setup">Implementation and setup</h2>
+        <p>To start using PingIt, run the backend and dashboard, register an app to get an
+          <code>appId</code>, and add that <code>appId</code> to the SDK.</p>
+        <ol>
+          <li>Run the backend and dashboard. See the
+            <a href="dashboard-guide.html">Dashboard Guide</a>.</li>
+          <li>Open the dashboard at <code>http://localhost:5173</code> and sign in. The seed creates
+            an admin account (<code>admin@pingit.dev</code>) and a developer account
+            (<code>dev@pingit.dev</code>).</li>
+          <li>Go to Apps and keys, register an app, and copy its <code>appId</code> and one-time API
+            key.</li>
+          <li>Add the <code>appId</code> and your server endpoint to your Android app, through
+            manifest auto-initialization or a call to <code>PingIt.init</code>. See the
+            <a href="app-guide.html">App Guide</a>.</li>
+        </ol>
+
+        <h2 id="architecture">Architecture</h2>
+        <p>How the SDK, server, database, and dashboard fit together:</p>
+        <pre class="mermaid">
+flowchart LR
+  subgraph Device["Mobile app"]
+    SDK["PingIt SDK"]
+  end
+  subgraph Server["PingIt server"]
+    M["Measurement API"]
+    D["Data API"]
+    A["Admin API"]
+  end
+  DB[("Postgres")]
+  Portal["Dashboard"]
+  Fallback["Public fallback"]
+
+  SDK --> M
+  SDK --> D
+  SDK -. if primary is down .-> Fallback
+  D --> DB
+  A --> DB
+  Portal --> A
+        </pre>
+
+        <p>The data model:</p>
+        <pre class="mermaid">
+erDiagram
+  APPS ||--o{ RESULTS : submits
+  APPS ||--o{ CRASHES : reports
+  APPS ||--o{ USERS : scopes
+  PROFILES {
+    text id PK
+    jsonb requires
+    int version
+  }
+  APPS {
+    text app_id PK
+    text name
+  }
+  USERS {
+    bigserial id PK
+    text email
+    text role
+    text app_id FK
+  }
+  RESULTS {
+    bigserial id PK
+    text app_id FK
+    text device_id
+    int score
+  }
+  CRASHES {
+    bigserial id PK
+    text app_id FK
+    text message
+  }
+        </pre>
+        <p class="callout">The full API reference and a sequence diagram of a readiness check are in
+          the <a href="../README.md">project README</a>.</p>
+      </main>
+    </div>
+
+    <footer>PingIt SDK documentation</footer>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+# PingIt — local infrastructure.
+#   docker compose up -d postgres          → just the database (default dev loop)
+#   docker compose --profile full up -d    → database + server (full-stack demo)
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pingit
+      POSTGRES_PASSWORD: pingit
+      POSTGRES_DB: pingit
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pingit -d pingit']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  server:
+    profiles: ['full']
+    build:
+      context: .
+      dockerfile: packages/server/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: '8080'
+      DATABASE_URL: postgres://pingit:pingit@postgres:5432/pingit
+      JWT_SECRET: change-me-in-production
+      ADMIN_EMAIL: admin@pingit.dev
+      ADMIN_PASSWORD: ChangeMe123!
+      DOWNLOAD_MAX_BYTES: '26214400'
+      UPLOAD_MAX_BYTES: '26214400'
+      RATE_LIMIT_MAX: '120'
+      RATE_LIMIT_WINDOW_MS: '60000'
+    ports:
+      - '8080:8080'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:8080/health || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata: {}

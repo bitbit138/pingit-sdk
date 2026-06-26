@@ -1,0 +1,39 @@
+{
+  "name": "@pingit/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "tsx src/seed/seed.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.0",
+    "@fastify/jwt": "^10.0.0",
+    "@fastify/rate-limit": "^11.0.0",
+    "@fastify/sensible": "^6.0.0",
+    "@pingit/contracts": "workspace:*",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.0.0",
+    "fastify": "^5.2.0",
+    "fastify-plugin": "^5.0.1",
+    "node-pg-migrate": "^8.0.0",
+    "pg": "^8.13.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.0",
+    "@types/supertest": "^6.0.0",
+    "pino-pretty": "^13.0.0",
+    "supertest": "^7.0.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.0"
+  }
+}

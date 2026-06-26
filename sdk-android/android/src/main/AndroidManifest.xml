@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application>
+
+        <!--
+            Registers PingIt with the AndroidX App Startup provider so the SDK
+            initializes automatically when the host app launches. The host app
+            supplies configuration via <meta-data> (com.pingit.APP_ID and
+            com.pingit.ENDPOINT). To initialize in code instead, override this
+            entry with tools:node="remove" and call PingIt.init(...).
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.pingit.android.startup.PingItInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
+    </application>
+
+</manifest>
