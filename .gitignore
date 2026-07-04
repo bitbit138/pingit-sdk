@@ -28,3 +28,7 @@ local.properties
 # os / editor
 .DS_Store
 *.log
+
+# office / temp lock files
+~$*
+*.tmp

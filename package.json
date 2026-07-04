@@ -25,6 +25,7 @@
     "db:reset": "docker compose down -v && docker compose up -d postgres",
     "db:migrate": "pnpm --filter @pingit/server db:migrate",
     "db:seed": "pnpm --filter @pingit/server db:seed",
+    "db:seed:mock": "pnpm --filter @pingit/server db:seed:mock",
     "smoke": "node packages/server/scripts/smoke.mjs",
     "docker:up": "docker compose --profile full up --build -d",
     "docker:down": "docker compose --profile full down"

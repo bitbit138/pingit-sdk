@@ -40,15 +40,17 @@ to work when the primary server is unreachable.
 
 ## Visuals
 
-A demo app using the SDK (the "Hub"), and the SDK dashboard:
+A demo app using the SDK (the "Hub"), and the SDK dashboard, profile editor, and history:
 
 ![Demo app using the PingIt SDK](docs/assets/demo-app.png)
 ![PingIt SDK dashboard](docs/assets/dashboard.png)
+![Readiness profile editor](docs/assets/profiles.png)
+![Measurement history](docs/assets/history.png)
 
-Video demonstration:
+Video demonstration: a short captioned walkthrough of the SDK gating everyday
+actions as the connection changes.
 
-<!-- Replace with a link to the recorded walkthrough. -->
-[Watch the demonstration](docs/assets/demo-video.mp4)
+[Watch the demo video](docs/assets/demo.mp4)
 
 ## Data Structures
 
