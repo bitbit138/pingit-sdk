@@ -216,7 +216,104 @@ for i, (name, meaning) in enumerate(profiles):
          [{"text": name, "size": 19, "bold": True, "color": INK, "space_after": 1},
           {"text": meaning, "size": 14, "color": MUTE}])
 
-# ============================================================ 5. HOW SIMPLE
+# ============================================================ 5. THE DASHBOARD
+s = slide()
+kicker(s, Inches(0.9), Inches(0.7), "Behind it: the dashboard")
+text(s, Inches(0.85), Inches(1.2), Inches(11.9), Inches(0.8),
+     [{"text": "Tune the profiles live. No app update.", "size": 30, "bold": True, "color": INK}])
+text(s, Inches(0.9), Inches(1.95), Inches(11.6), Inches(0.6),
+     [{"text": "An operator manages thresholds, apps, and health in a web dashboard. "
+               "Devices pick up the changes on their own.", "size": 16, "color": MUTE, "line_spacing": 1.15}])
+
+# ---- dashboard mock (left) ----
+fx, fy, fw, fh = 0.85, 2.75, 6.7, 4.35
+frame = rect(s, Inches(fx), Inches(fy), Inches(fw), Inches(fh), WHITE)
+frame.line.color.rgb = RGBColor(0xE2, 0xD6, 0xC6)
+frame.line.width = Pt(1.25)
+# window chrome
+rect(s, Inches(fx), Inches(fy), Inches(fw), Inches(0.34), INK)
+for j, c in enumerate((ORANGE, RGBColor(0xF2, 0xC0, 0x5A), RGBColor(0x9C, 0x8F, 0x80))):
+    oval(s, Inches(fx + 0.18 + j * 0.22), Inches(fy + 0.1), Inches(0.13), Inches(0.13), c)
+text(s, Inches(fx + 1.0), Inches(fy + 0.045), Inches(4), Inches(0.3),
+     [{"text": "PingIt  ·  Dashboard", "size": 10, "color": CREAM}])
+# sidebar
+sbx, sby, sbw = fx, fy + 0.34, 1.75
+sbh = fh - 0.34
+rect(s, Inches(sbx), Inches(sby), Inches(sbw), Inches(sbh), CREAM2)
+for k, item in enumerate(["Dashboard", "Profiles", "History", "Apps & keys", "Health", "Crashes"]):
+    iy = sby + 0.3 + k * 0.62
+    active = item == "Profiles"
+    if active:
+        rect(s, Inches(sbx), Inches(iy - 0.05), Inches(0.08), Inches(0.44), ORANGE)
+        rect(s, Inches(sbx + 0.08), Inches(iy - 0.05), Inches(sbw - 0.08), Inches(0.44),
+             RGBColor(0xEE, 0xDD, 0xC7))
+    text(s, Inches(sbx + 0.26), Inches(iy), Inches(sbw - 0.34), Inches(0.4),
+         [{"text": item, "size": 12.5, "bold": active,
+           "color": (ORANGE_DEEP if active else INK)}], anchor=MSO_ANCHOR.MIDDLE)
+# main panel label
+mpx = fx + sbw
+text(s, Inches(mpx + 0.3), Inches(sby + 0.06), Inches(fw - sbw - 0.5), Inches(0.3),
+     [{"text": "PROFILES", "size": 10, "bold": True, "color": MUTE, "spacing": 1.8}])
+# profile editor card
+cx, cy, cw, ch = mpx + 0.28, sby + 0.42, fw - sbw - 0.55, sbh - 0.62
+card = rect(s, Inches(cx), Inches(cy), Inches(cw), Inches(ch), CREAM)
+card.line.color.rgb = RGBColor(0xE7, 0xD8, 0xC4)
+card.line.width = Pt(1)
+text(s, Inches(cx + 0.22), Inches(cy + 0.16), Inches(cw - 1.4), Inches(0.4),
+     [{"text": "VIDEO CALL", "size": 17, "bold": True, "color": INK}])
+pill(s, Inches(cx + cw - 0.95), Inches(cy + 0.18), Inches(0.7), Inches(0.34), "v7", ORANGE, WHITE, size=12)
+rows = [("Download min", "1.5 Mbps"), ("Upload min", "1.0 Mbps"),
+        ("Latency max", "200 ms"), ("Jitter max", "40 ms")]
+ry0 = cy + 0.72
+for r_i, (lbl, val) in enumerate(rows):
+    ry = ry0 + r_i * 0.5
+    text(s, Inches(cx + 0.24), Inches(ry), Inches(2.4), Inches(0.4),
+         [{"text": lbl, "size": 13, "color": INK}], anchor=MSO_ANCHOR.MIDDLE)
+    vb = rect(s, Inches(cx + cw - 1.55), Inches(ry - 0.01), Inches(1.3), Inches(0.4), WHITE)
+    vb.line.color.rgb = RGBColor(0xD8, 0xC7, 0xB2)
+    vb.line.width = Pt(1)
+    vtf = vb.text_frame
+    vtf.vertical_anchor = MSO_ANCHOR.MIDDLE
+    vtf.margin_top = vtf.margin_bottom = Pt(0)
+    vtf.margin_left = vtf.margin_right = Pt(6)
+    vp = vtf.paragraphs[0]
+    vp.alignment = PP_ALIGN.CENTER
+    vr = vp.add_run()
+    vr.text = val
+    vr.font.size = Pt(13)
+    vr.font.bold = True
+    vr.font.name = MONO
+    vr.font.color.rgb = INK
+sbtn_y = cy + ch - 0.62
+pill(s, Inches(cx + 0.24), Inches(sbtn_y), Inches(1.8), Inches(0.44), "Save changes", ORANGE, WHITE, size=13)
+text(s, Inches(cx + 2.2), Inches(sbtn_y + 0.02), Inches(cw - 2.35), Inches(0.44),
+     [{"text": "-> now version 8", "size": 12, "italic": True, "color": MUTE, "font": MONO}],
+     anchor=MSO_ANCHOR.MIDDLE)
+
+# ---- what you manage (right) ----
+rx = 8.0
+text(s, Inches(rx), Inches(2.78), Inches(4.8), Inches(0.5),
+     [{"text": "What you manage here", "size": 19, "bold": True, "color": INK}])
+manage = [
+    "Tune profile thresholds - no app release needed.",
+    "Register apps and issue an appId.",
+    "Watch live analytics and device history.",
+    "See crash reports as they arrive.",
+]
+by0 = 3.5
+for b_i, btxt in enumerate(manage):
+    byy = by0 + b_i * 0.6
+    rect(s, Inches(rx), Inches(byy + 0.07), Inches(0.16), Inches(0.16), ORANGE)
+    text(s, Inches(rx + 0.36), Inches(byy), Inches(4.5), Inches(0.6),
+         [{"text": btxt, "size": 15, "color": INK, "line_spacing": 1.05}])
+co_y = by0 + len(manage) * 0.6 + 0.15
+rect(s, Inches(rx), Inches(co_y), Inches(0.1), Inches(0.9), ORANGE)
+rect(s, Inches(rx + 0.1), Inches(co_y), Inches(4.7), Inches(0.9), CREAM2)
+text(s, Inches(rx + 0.36), Inches(co_y + 0.14), Inches(4.3), Inches(0.7),
+     [{"text": "Change what \"ready\" means from here - every device follows, no update.",
+       "size": 13.5, "bold": True, "color": INK, "line_spacing": 1.1}])
+
+# ============================================================ 6. HOW SIMPLE
 s = slide()
 kicker(s, Inches(0.9), Inches(0.9), "How you use it")
 text(s, Inches(0.85), Inches(1.5), Inches(11.6), Inches(0.9),
@@ -318,7 +415,7 @@ def app_icon(slide_, x, y, d, brand):
         fill(ORANGE)
 
 
-# ============================================================ 6. SIX APPS
+# ============================================================ 7. SIX APPS
 s = slide()
 kicker(s, Inches(0.9), Inches(0.7), "Who would build with it")
 text(s, Inches(0.85), Inches(1.25), Inches(11.6), Inches(0.7),
@@ -342,7 +439,7 @@ for i, (brand, name, body) in enumerate(apps):
          [{"text": name, "size": 18, "bold": True, "color": INK, "space_after": 2},
           {"text": body, "size": 13, "color": MUTE, "line_spacing": 1.08}])
 
-# ============================================================ 7. CLOSE
+# ============================================================ 8. CLOSE
 s = slide()
 bg(s, INK)
 oval(s, Inches(10.6), Inches(4.6), Inches(3.4), Inches(3.4), ORANGE)

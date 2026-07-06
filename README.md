@@ -19,6 +19,18 @@ The project has three parts:
 The SDK initializes itself on app startup, keeps network use small, and continues
 to work when the primary server is unreachable.
 
+## Documentation and demo
+
+| What | Where |
+|------|-------|
+| Video demonstration | [docs/assets/demo.mp4](docs/assets/demo.mp4) — captioned walkthrough (click to play on GitHub) |
+| Promo video | [presentation/promo.mp4](presentation/promo.mp4) — 30-second overview |
+| Documentation site | [docs/index.html](docs/index.html) — open in a browser, or view rendered: [Overview](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/index.html) |
+| App Guide | [docs/app-guide.html](docs/app-guide.html) ([rendered](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/app-guide.html)) |
+| Dashboard Guide | [docs/dashboard-guide.html](docs/dashboard-guide.html) ([rendered](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/dashboard-guide.html)) |
+| Design docs | [Product requirements](docs/PRD.md) · [Server architecture](docs/SERVER_ARCHITECTURE.md) |
+| Screenshots | [docs/assets/](docs/assets/) |
+
 ## Features
 
 - Connection measurement: download and upload throughput, latency, and jitter.
@@ -50,7 +62,10 @@ A demo app using the SDK (the "Hub"), and the SDK dashboard, profile editor, and
 Video demonstration: a short captioned walkthrough of the SDK gating everyday
 actions as the connection changes.
 
-[Watch the demo video](docs/assets/demo.mp4)
+- [Watch the demo video](docs/assets/demo.mp4) — captioned walkthrough of the SDK in action.
+- [Watch the promo video](presentation/promo.mp4) — a 30-second overview.
+
+On GitHub, clicking either link opens the file with an inline video player.
 
 ## Data Structures
 
@@ -326,8 +341,17 @@ this device" query directly without a scan or a sort.
 
 ## Documentation
 
-Full developer documentation, including the App Guide and the Dashboard Guide,
-is published as an HTML site in [docs/index.html](docs/index.html).
+Full developer documentation is published as an HTML site under [docs/](docs/).
+Open [docs/index.html](docs/index.html) in a browser, or read the rendered pages
+online:
+
+- [Overview](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/index.html)
+- [App Guide](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/app-guide.html) (adding and using the SDK)
+- [Dashboard Guide](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/dashboard-guide.html) (running the backend and dashboard)
+
+The design docs render directly on GitHub:
+[Product requirements](docs/PRD.md) and
+[Server architecture](docs/SERVER_ARCHITECTURE.md).
 
 ## Running locally
 
