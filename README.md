@@ -21,11 +21,15 @@ to work when the primary server is unreachable.
 
 ## Documentation and demo
 
+**Full documentation:** [docs/index.html](docs/index.html) — open in a browser, or
+read it rendered online, no download needed:
+[**pingit-sdk documentation**](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/index.html).
+It links out to the App Guide and Dashboard Guide below.
+
 | What | Where |
 |------|-------|
 | Video demonstration | [docs/assets/demo.mp4](docs/assets/demo.mp4) — captioned walkthrough (click to play on GitHub) |
 | Promo video | [presentation/promo.mp4](presentation/promo.mp4) — 30-second overview |
-| Documentation site | [docs/index.html](docs/index.html) — open in a browser, or view rendered: [Overview](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/index.html) |
 | App Guide | [docs/app-guide.html](docs/app-guide.html) ([rendered](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/app-guide.html)) |
 | Dashboard Guide | [docs/dashboard-guide.html](docs/dashboard-guide.html) ([rendered](https://htmlpreview.github.io/?https://github.com/bitbit138/pingit-sdk/blob/main/docs/dashboard-guide.html)) |
 | Design docs | [Product requirements](docs/PRD.md) · [Server architecture](docs/SERVER_ARCHITECTURE.md) |
