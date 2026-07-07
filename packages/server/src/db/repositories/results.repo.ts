@@ -50,33 +50,6 @@ export async function listResults(
   return res.rows.map(toRecord);
 }
 
-/** Rows in a time range for analytics aggregation (server-side recompute). */
-export async function listForAnalytics(
-  pool: Pool,
-  opts: { appId?: string | null; from?: string; to?: string },
-): Promise<ResultRow[]> {
-  const clauses: string[] = [];
-  const params: unknown[] = [];
-  if (opts.appId) {
-    params.push(opts.appId);
-    clauses.push(`app_id = $${params.length}`);
-  }
-  if (opts.from) {
-    params.push(opts.from);
-    clauses.push(`created_at >= $${params.length}`);
-  }
-  if (opts.to) {
-    params.push(opts.to);
-    clauses.push(`created_at <= $${params.length}`);
-  }
-  const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
-  const res = await pool.query<ResultRow>(
-    `SELECT * FROM results ${where} ORDER BY created_at ASC`,
-    params,
-  );
-  return res.rows;
-}
-
 function num(v: string | number | null): number {
   return v === null ? 0 : typeof v === 'number' ? v : Number(v);
 }
