@@ -22,8 +22,9 @@ sdk-android/**/build/
 local.properties
 .kotlin/
 
-# python (presentation)
+# python (presentation) — build scripts are local tooling; the .pptx is the deliverable
 .venv/
+presentation/*.py
 
 # os / editor
 .DS_Store
@@ -32,3 +33,6 @@ local.properties
 # office / temp lock files
 ~$*
 *.tmp
+
+# local notes / scratch (not part of the project)
+git-link

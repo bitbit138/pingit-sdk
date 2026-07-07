@@ -59,13 +59,22 @@ A demo app using the SDK (the "Hub"), and the SDK dashboard, profile editor, and
 ![Readiness profile editor](docs/assets/profiles.png)
 ![Measurement history](docs/assets/history.png)
 
-Video demonstration: a short captioned walkthrough of the SDK gating everyday
-actions as the connection changes.
+### Demo video
 
-- [Watch the demo video](docs/assets/demo.mp4) — captioned walkthrough of the SDK in action.
-- [Watch the promo video](presentation/promo.mp4) — a 30-second overview.
+A short captioned walkthrough of the SDK gating everyday actions as the
+connection changes.
 
-On GitHub, clicking either link opens the file with an inline video player.
+<video src="https://github.com/bitbit138/pingit-sdk/raw/main/docs/assets/demo.mp4" controls muted></video>
+
+If the player above does not load, [open demo.mp4](docs/assets/demo.mp4).
+
+### Promo video
+
+A 30-second overview.
+
+<video src="https://github.com/bitbit138/pingit-sdk/raw/main/presentation/promo.mp4" controls muted></video>
+
+If the player above does not load, [open promo.mp4](presentation/promo.mp4).
 
 ## Data Structures
 

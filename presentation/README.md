@@ -1,49 +1,25 @@
 # PingIt SDK — Presentation
 
-Editable PowerPoint deck for the SDK proposal + server architecture.
+Slides and supporting material for presenting the SDK.
 
-- **`PingIt_SDK.pptx`** — the deck (22 slides). Open in PowerPoint, Keynote, or
-  Google Slides and edit text / move shapes directly.
-- **`build_deck.py`** — the generator. Edit wording or the theme here and
-  regenerate to rebuild the whole deck consistently.
+- **`PingIt_Pitch.pptx`** — the developer pitch (8 slides, ~4 minutes). A
+  non-technical walkthrough for an audience of developers: the problem, the
+  `isReadyFor` idea, the readiness profiles, the dashboard for managing them, how
+  to integrate it, and six example apps.
+- **`PingIt_SDK.pptx`** — the detailed proposal deck (22 slides): architecture,
+  API surface, data model, resilience, and research notes.
+- **`PRESENTATION_OUTLINE.md`** — a friendly, non-technical outline and demo
+  script to present from.
+- **`QA_PREP.md`** — fifteen likely questions with short answers to rehearse.
+- **`promo.mp4`** — a 30-second promo clip to open the presentation with.
 
-## Two ways to edit
+## Editing the decks
 
-**A. Directly in PowerPoint** — every text box and diagram box is a native,
-editable shape. Just type. (If you regenerate later, those manual edits are
-overwritten — keep your changes in the script if you want them to stick.)
+Open either `.pptx` in PowerPoint, Keynote, or Google Slides. Every text box and
+diagram is a native, editable shape, so you can type over the wording or move
+shapes directly.
 
-**B. In the script (recommended for structural changes)**
-1. Open `build_deck.py`.
-2. The deck is organised into 4 sections (top of the file): `THEME`
-   (colours/fonts), `HELPERS`, `SLIDES` (the wording lives here, one `slide_*`
-   function per slide), and `BUILD` (the running order).
-3. Edit the text in the relevant `slide_*` function, or recolour everything by
-   changing the palette constants in the `THEME` block.
-4. Regenerate:
-
-```bash
-./.venv/bin/python presentation/build_deck.py
-```
-
-## First-time setup (already done in this workspace)
-
-```bash
-python3 -m venv .venv
-./.venv/bin/pip install python-pptx
-```
-
-## Preview as images (optional)
-
-Requires LibreOffice + poppler (already installed here):
-
-```bash
-/Applications/LibreOffice.app/Contents/MacOS/soffice --headless \
-  --convert-to pdf --outdir render presentation/PingIt_SDK.pptx
-pdftoppm -png -r 90 render/PingIt_SDK.pdf render/slide
-```
-
-## Slide order (22)
+## Slide order — proposal deck (22)
 
 Title · Problem & need · The idea · Features · Readiness checks · System
 architecture · SDK exposed functions · SDK internal functions · On-device data
